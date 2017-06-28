@@ -11,7 +11,9 @@ None
 Role Variables
 --------------
 
-None
+```
+kubeadm_cgroup_driver: defaults to cgroupfs
+```
 
 Dependencies
 ------------
