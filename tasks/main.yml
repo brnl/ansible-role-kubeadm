@@ -21,6 +21,15 @@
   environment: "{{ kubeadm_proxy_env }}"
   become: yes
 
+- name: Set cluster DNS
+  lineinfile:
+    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    regexp: '^Environment="KUBELET_DNS_ARGS='
+    line: "Environment=\"KUBELET_DNS_ARGS=--cluster-dns={{ kubeadm_cluster_dns }} --cluster-domain={{ kubeadm_cluster_domain }}\""
+  notify:
+    - reload kubelet
+  become: yes
+
 - name: Set cgroup driver
   lineinfile:
     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf

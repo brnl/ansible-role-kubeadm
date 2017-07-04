@@ -1,6 +1,8 @@
 ---
 
 kubeadm_cgroup_driver: cgroupfs
+kubeadm_cluster_dns: "10.96.0.10"
+kubeadm_cluster_domain: "cluster.local"
 
 kubeadm_proxy_env:
   ansible_user_id: "{{ ansible_user_id }}"
