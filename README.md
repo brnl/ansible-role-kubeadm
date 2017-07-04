@@ -13,6 +13,7 @@ Role Variables
 
 ```
 kubeadm_cgroup_driver: defaults to cgroupfs
+kubeadm_cluster_dns: defaults to 10.96.0.10
 ```
 
 Dependencies

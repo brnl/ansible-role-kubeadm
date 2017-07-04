@@ -30,6 +30,15 @@
     - reload kubelet
   become: yes
 
+- name: Set cluster DNS
+  lineinfile:
+    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    regexp: '^Environment="KUBELET_DNS_ARGS'
+    line: "Environment=\"KUBELET_DNS_ARGS=--cluster-dns={{ kubeadm_cluster_dns }} --cluster-domain=cluster.local\""
+  notify:
+    - reload kubelet
+  become: yes
+
 - name: Enable Kubelet
   service:
     name: kubelet
