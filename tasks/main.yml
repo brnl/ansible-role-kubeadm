@@ -13,7 +13,7 @@
 - name: Install Kubeadm
   package:
     name: "{{ item }}"
-    state: latest
+    state: present
   with_items:
     - kubeadm
     - kubelet
