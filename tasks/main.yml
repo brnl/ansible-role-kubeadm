@@ -1,46 +1,7 @@
 ---
 
-- name: Disable SELinux
-  selinux:
-    state: disabled
-  become: yes
+- name: "Install Kubeadm"
+  include: "install-{{ ansible_os_family|lower }}.yml"
 
-- name: Add Kubernetes Repo
-  copy: src=kubernetes.repo dest=/etc/yum.repos.d/kubernetes.repo
-  become: yes
-  when: ansible_os_family == 'RedHat'
-
-- name: Install Kubeadm
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - kubeadm
-    - kubelet
-    - kubernetes-cni
-  environment: "{{ kubeadm_proxy_env }}"
-  become: yes
-
-- name: Set cluster DNS
-  lineinfile:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: '^Environment="KUBELET_DNS_ARGS='
-    line: "Environment=\"KUBELET_DNS_ARGS=--cluster-dns={{ kubeadm_cluster_dns }} --cluster-domain={{ kubeadm_cluster_domain }}\""
-  notify:
-    - reload kubelet
-  become: yes
-
-- name: Set cgroup driver
-  lineinfile:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: '^Environment="KUBELET_CGROUP_ARGS='
-    line: "Environment=\"KUBELET_CGROUP_ARGS=--cgroup-driver={{ kubeadm_cgroup_driver }}\""
-  notify:
-    - reload kubelet
-  become: yes
-
-- name: Enable Kubelet
-  service:
-    name: kubelet
-    enabled: yes
-  become: yes
+- name: "Configure Kubeadm"
+  include: "configure.yml"
