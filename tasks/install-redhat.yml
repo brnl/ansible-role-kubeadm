@@ -5,6 +5,11 @@
     state: disabled
   become: yes
 
+- name: Install GPG keys, workaround for Ansible issue 20711
+  command: yum -q makecache -y --disablerepo=* --enablerepo=kubernetes
+  environment: "{{ kubeadm_proxy_env }}"
+  become: yes
+
 - name: Add Kubernetes Repo
   copy: src=kubernetes.repo dest=/etc/yum.repos.d/kubernetes.repo
   become: yes
