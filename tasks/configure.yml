@@ -1,30 +1,30 @@
 ---
 
-- name: Set cluster DNS
+- name: Remove bootstrap config
   lineinfile:
     path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: '^Environment="KUBELET_DNS_ARGS='
-    line: "Environment=\"KUBELET_DNS_ARGS=--cluster-dns={{ kubeadm_cluster_dns }} --cluster-domain={{ kubeadm_cluster_domain }}\""
+    regexp: '^Environment="KUBELET_KUBECONFIG_ARGS='
+    line: "Environment=\"KUBELET_KUBECONFIG_ARGS=--kubeconfig=/etc/kubernetes/kubelet.conf\""
   notify:
     - reload kubelet
   become: yes
 
-- name: Unset fail-swap-on
-  lineinfile:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: '^Environment="KUBELET_EXTRA_ARGS='
-    line: "Environment=\"KUBELET_EXTRA_ARGS=--fail-swap-on=false\""
-  notify:
-    - reload kubelet
+- name: Set extra kubeadm arguments
+  template:
+    owner: root
+    group: root
+    mode: 644
+    src: kubelet.conf
+    dest: /etc/sysconfig/kubelet
   become: yes
 
-- name: Set cgroup driver
-  lineinfile:
-    path: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-    regexp: '^Environment="KUBELET_CGROUP_ARGS='
-    line: "Environment=\"KUBELET_CGROUP_ARGS=--cgroup-driver={{ kubeadm_cgroup_driver }}\""
-  notify:
-    - reload kubelet
+- name: Create empty kubelet config file
+  template:
+    owner: root
+    group: root
+    mode: 644
+    src: kubelet-config.yaml
+    dest: /var/lib/kubelet/config.yaml
   become: yes
 
 - name: Enable Kubelet
